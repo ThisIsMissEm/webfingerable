@@ -9,9 +9,9 @@ if (process.argv.length !== 3) {
   process.exit(1);
 }
 
-const domainblocks = JSON.parse(
-  fs.readFileSync(path.join(process.cwd(), "domain-blocks.json"), "utf-8")
-);
+const domainBlockFile = new URL("./domain-blocks.json", import.meta.url)
+  .pathname;
+const domain_blocks = JSON.parse(fs.readFileSync(domainBlockFile, "utf-8"));
 
 const filepath = path.join(process.cwd(), process.argv[2]);
 console.log(`Importing ${filepath}...`);
@@ -25,6 +25,13 @@ let rows = 0;
 fs.createReadStream(filepath)
   .pipe(csv({ headers: ["username", "domain", "uri", "url"], skipLines: 1 }))
   .on("data", (data) => {
+    if (
+      domain_blocks.some((blockedDomain) => data.domain.endsWith(blockedDomain))
+    ) {
+      console.log(`Skipping ${data.domain} as it is blocked`);
+      return;
+    }
+
     insertAccount.run(data);
     rows++;
   })

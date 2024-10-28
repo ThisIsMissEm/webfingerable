@@ -1,13 +1,20 @@
 import db from "./utils/db.js";
 
+let drop = false;
+if (process.argv[2] === "reset") {
+  drop = true;
+}
+
+if (drop) db.exec(`DROP TABLE IF EXISTS accounts;`);
+
 db.exec(`
-  DROP TABLE IF EXISTS accounts;
-  CREATE TABLE accounts(
+  CREATE TABLE IF NOT EXISTS accounts(
     'username' varchar NOT NULL,
     'domain' varchar NOT NULL,
     'uri' text,
     'url' text,
     'last_checked_at' datetime,
+    'status' text,
     PRIMARY KEY(username, domain)
   );
 `);
@@ -22,14 +29,19 @@ interface Result {
 }
 */
 
+if (drop) db.exec("DROP TABLE IF EXISTS results;");
+
 db.exec(`
-  DROP TABLE IF EXISTS results;
   CREATE TABLE IF NOT EXISTS results(
-    'domain' varchar PRIMARY KEY NOT NULL,
+    'id' varchar PRIMARY KEY DESC,
+    'domain' varchar NOT NULL,
+    'actor' varchar,
     'status' varchar NOT NULL,
-    'actor' varchar NOT NULL,
+    'error' text,
     'webfinger_status' int,
+    'webfinger_location' text,
     'hostmeta_status' int,
+    'hostmeta_location' text,
     'nodeinfo_status' int,
     'nodeinfo' text,
     'updated_at' datetime default current_timestamp NOT NULL
