@@ -1,5 +1,4 @@
-const db = require("better-sqlite3")("data.db", { verbose: console.log });
-db.pragma("journal_mode = WAL");
+import db from "./utils/db.js";
 
 db.exec(`
   DROP TABLE IF EXISTS accounts;

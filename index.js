@@ -1,12 +1,9 @@
 import path from "node:path";
 import fs from "node:fs";
 import Piscina from "piscina";
-import sqlite from "better-sqlite3";
 import QueryStream from "./utils/querystream.js";
 import Progress from "./utils/progress.js";
-
-const db = sqlite("data.db", { verbose: console.log });
-db.pragma("journal_mode = WAL");
+import db from "./utils/db.js";
 
 const domainBlockFile = new URL("./domain-blocks.json", import.meta.url)
   .pathname;
@@ -47,7 +44,8 @@ domainsStream
     progress.incSubmitted();
     pool
       .run({ domain })
-      .then(() => {
+      .then((result) => {
+        console.log("<<", result);
         progress.incCompleted();
       })
       .catch((err) => {

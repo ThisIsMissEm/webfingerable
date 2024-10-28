@@ -1,7 +1,4 @@
-import sqlite from "better-sqlite3";
-
-const db = sqlite("data.db", { verbose: console.log });
-db.pragma("journal_mode = WAL");
+import db from "./utils/db.js";
 
 // const currentSchema = db.pragma("table_info('accounts');");
 // if (

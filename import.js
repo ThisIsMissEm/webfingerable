@@ -1,10 +1,8 @@
-import sqlite from "better-sqlite3";
 import csv from "csv-parser";
 import fs from "fs";
 import path from "path";
 
-const db = sqlite("data.db", { verbose: console.log });
-db.pragma("journal_mode = WAL");
+import db from "./utils/db.js";
 
 if (process.argv.length !== 3) {
   console.error("Missing csv filename, usage: npm import [filename.csv]");
